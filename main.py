@@ -1,112 +1,223 @@
-import numpy as np
-import pandas as pd
 import streamlit as st
 
-from snowflake.snowpark.session import Session
-session = Session.builder.configs(st.secrets.connections.snowflake).create()
+# ページのタイトル設定
+st.set_page_config(
+    page_title="Wedding Quiz",
+)
 
-st.header('クイズ大会')
+# セッション情報の初期化
+if "page_id" not in st.session_state:
+    st.session_state.page_id = "main"
+    st.session_state.answers = []
 
-# 回答のページと結果発表のページをtabで分けて用意
-tab1, tab2 = st.tabs(['回答ページ', '結果発表'])
+# 各種メニューの非表示設定
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden; }
+        footer {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
 
-with tab1:
+# 最初のページ
+def main():
+    st.markdown(
+        "<h1 style='text-align: center;'>Quiz</h1>",
+        unsafe_allow_html=True,
+    )
 
-     answer = []
-     st.subheader('参加者情報')
-     answer.append(st.text_input('氏名', ''))
+    def change_page():
+        st.session_state.answers.append(st.session_state.answer0)
+        st.session_state.page_id = "page1"
 
-# 4択問題の回答箇所
-     st.subheader('張り切っていってみよ〜✊')
-     for iii in range(1,11):
-          answer.append(st.selectbox(f'解答{iii}', ['1','2','3','4']))
-                    
-     renames = ['名前','解答1','解答2','解答3','解答4','解答5'
-                 ,'解答6','解答7','解答8','解答9','解答10']
-     df_answer = pd.DataFrame(answer, index=renames).T
-
-# 既に用意している回答と結合して正解数を計算
-     query = "select * from QUIZ.QUIZ_APP.ANSWER;"
-     df_collect = session.sql(query).to_pandas()
-     df = pd.merge(df_answer.T.reset_index().rename(columns={'index':'ID'})
-                    , df_collect, on='ID')
-     answer.append((df[0] == df.ANSWER).sum())     
-
-# Snowflakeへデータを登録する用のクエリを作成
-     query = f'''insert into QUIZ.QUIZ_APP.RESULT
-          select \n
-     '''
-     for iii in range(len(answer)):
-          if iii == 0:
-               query = query + f"'{answer[iii]}'\n"
-          else:
-               query = query + f", '{answer[iii]}'\n"
-
-# 回答の登録
-     st.write('以下の解答で送信するよ')
-     st.write(df_answer)
-
-# st.buttonを利用してボタンを押したら回答が登録される仕組み
-     st.write('問題なかったら、下記ボタンから解答を送信してね！')
-     transfer = st.button('解答を送信する')
-
-     if transfer:
-          session.sql(query).collect()
-          st.subheader(f'「{answer[0]}」さんの解答を受け付けました！')
-          st.balloons()       
+    with st.form("f0"):
+        st.radio("テーブル番号を選んでね", ["A", "B", "C", "D", "E", "F", "G"], key="answer0")
+        st.form_submit_button("スタート！", on_click=change_page)
 
 
-with tab2:
-     st.subheader('🥁結果発表🥁')
-# 結果・順位を取得
-     query ='''select 
-                    *, rank() over( order by collect_answer desc) as rank
-               from 
-                    QUIZ.QUIZ_APP.RESULT 
-               order by 
-                    collect_answer desc'''
-     df_result =  session.sql(query).to_pandas()
-     df_result.rename(columns={'NAME':'名前','COLLECT_ANSWER':'正解数', 'RANK':'順位'}, inplace=True)
+# 問題１
+def page1():
+    st.markdown(
+        "<h1 style='text-align: center;'>第１問</h1>",
+        unsafe_allow_html=True,
+    )
 
-# 結果発表
-     open_under_4 = st.button(f'4位以下の順位は〜〜')
-     if open_under_4:
-          st.snow()
-          st.write(df_result[df_result['順位'] >= 4].set_index('順位')[['名前', '正解数']])
-     
-     column1, column2, column3 = st.columns(3)
-     with column1:
-          open_top2 = st.button(f'2位の人は〜〜', key='No2')
-          if open_top2:
-               st.snow()
-               df_2 = df_result[df_result['順位'] == 2].set_index('順位')[['名前', '正解数']]
-               st.write(f'2位は')
-               for iii in range(df_2.shape[0]):
-                    st.write(f'##### {df_2.iloc[iii].名前} さん')
-               st.write(f'でした🎉')
-     
-     with column2:
-          open_top1 = st.button(f'1位の人は〜〜', key='No1')
+    def change_page():
+        if str(st.session_state.answer1) == "(1, 2, 3, 4, 1, 2, 3, 4)":
+            st.session_state.answers.append(st.session_state.answer1 + "⭕️")
+            st.balloons()
+        else:
+            st.session_state.answers.append(st.session_state.answer1 + "❌")
+        
+        st.session_state.page_id = "page2"
 
-     with column3:
-          open_top3 = st.button(f'3位の人は〜〜', key='No3')
-          if open_top2 == True:
-               open_top3 = True
-          if open_top3:
-               st.snow()
-               df_3 = df_result[df_result['順位'] == 3].set_index('順位')[['名前', '正解数']]
-               st.write(f'3位は')
-               for iii in range(df_3.shape[0]):
-                    st.write(f'##### {df_3.iloc[iii].名前} さん')
-               st.write(f'でした🎉')
+    with st.form("f1"):
+        code = '''
+            tuple1 = (1,2)
+            tuple2 = (3,4)
+            tuple3 = tuple1 + tuple2
+            tuple3 = tuple3 * 2
+            print(tuple3)'''
+        st.code(code, language='python')
+        st.radio("を実行するとprintされるのは何", [ "(1, 2, 3, 4)","(1, 2, 3, 4, 1, 2, 3, 4)", "(1234)","(2468)"], key="answer1")
+        st.form_submit_button("回答", on_click=change_page)
 
-     if open_top1:
-          st.snow()
-          df_1 = df_result[df_result['順位'] == 1].set_index('順位')[['名前', '正解数']]
-          for iii in range(df_1.shape[0]):
-               st.subheader(f'1位は　🎉　{df_1.iloc[iii].名前}　🎉　さんでした！')
-          
-     open_all_result = st.button(f'全員の順位は〜〜')
-     if open_all_result:
-          st.snow()
-          st.write(df_result.set_index('順位')[['名前', '正解数']])
+
+# 問題２
+def page2():
+    st.markdown(
+        "<h1 style='text-align: center;'>第２問</h1>",
+        unsafe_allow_html=True,
+    )
+
+    def change_page():
+        if st.session_state.answer2 == "30":
+            st.session_state.answers.append(st.session_state.answer2 + "⭕️")
+            st.balloons()
+        else:
+            st.session_state.answers.append(st.session_state.answer2 + "❌")
+        st.session_state.page_id = "page3"
+
+    with st.form("f2"):
+        code = '''
+            int1 = 10
+            int2 = 20
+            int3 = int1 + int2
+            print(int3)'''
+        st.code(code, language='python')
+        
+        st.radio("を実行するとprintされるのは何", ["1020", "30", "エラー"], key="answer2")
+        st.form_submit_button("回答", on_click=change_page)
+
+
+# 問題３
+def page3():
+    st.markdown(
+        "<h1 style='text-align: center;'>第３問</h1>",
+        unsafe_allow_html=True,
+    )
+
+    def change_page():
+        if st.session_state.answer3 == "エラー":
+            st.session_state.answers.append(st.session_state.answer3 + "⭕️")
+            st.balloons()
+        else:
+            st.session_state.answers.append(st.session_state.answer3 + "❌")
+        st.session_state.page_id = "page4"
+
+    with st.form("f3"):
+        code = '''
+            str1 = "こんにちは"
+            str2 = "hello"
+            str2 = str1 + str2
+            print(str3)'''
+        st.code(code, language='python')
+        st.radio("を実行するとprintされるのは何", ["こんにちはhello", "helloこんにちは", "hello", "こんにちは","エラー"], key="answer3")
+        st.form_submit_button("回答", on_click=change_page)
+
+
+# 問題４
+def page4():
+    st.markdown(
+        "<h1 style='text-align: center;'>第４問</h1>",
+        unsafe_allow_html=True,
+    )
+
+    def change_page():
+        if st.session_state.answer4 == "[1, 2, 3, 4, 5, 'h', 'e', 'l', 'l', 'o']":
+            st.session_state.answers.append(st.session_state.answer4 + "⭕️")
+            st.balloons()
+        else:
+            st.session_state.answers.append(st.session_state.answer4 + "❌")
+        st.session_state.page_id = "page5"
+
+    with st.form("f4"):
+        
+        code = '''
+            list1= [1,2,3,4,5]
+            str2 = "hello"
+            list1 += str2
+            print(list1)'''
+        st.code(code, language='python')
+        st.radio("を実行するとprintされるのは何", ["[1, 2, 3, 4, 5, 'h', 'e', 'l', 'l', 'o']", "[1, 2, 3, 4, 5, 'hello']", "[ 'h', 'e', 'l', 'l', 'o', 1, 2, 3, 4, 5]", "エラー"], key="answer4")
+        st.form_submit_button("回答", on_click=change_page)
+
+
+# 問題５
+def page5():
+    st.markdown(
+        "<h1 style='text-align: center;'>第５問</h1>",
+        unsafe_allow_html=True,
+    )
+
+    def change_page():
+        if st.session_state.answer5 == "エラー":
+            st.session_state.answers.append(st.session_state.answer5 + "⭕️")
+            st.balloons()
+        else:
+            st.session_state.answers.append(st.session_state.answer5 + "❌")
+        st.session_state.page_id = "page_end"
+
+    with st.form("f5"):
+        code = '''
+            list1 = [1,2,3,4,5]
+            list2 = [1,2,3,4,5]
+            str2 = "hello"
+            list1 += str2 & list2
+            print(list1)
+        '''
+        st.code(code, language='python')
+        
+        
+        st.radio("を実行するとprintされるのは何", ["[1, 2, 3, 4, 5, 'hello']", "[1, 2, 3, 4, 5, 'h', 'e', 'l', 'l', 'o'", "エラー"], key="answer5")
+        st.form_submit_button("回答", on_click=change_page)
+
+
+# 最終ページ
+def page_end():
+
+    # 回答内容をサーバに送ったりなんなり
+
+    st.markdown(
+        "<h1 style='text-align: center;'>回答ありがとう🎉</h1>",
+        unsafe_allow_html=True,
+    )
+    st.markdown("---")
+    st.markdown(
+        "<h2 style='text-align: center;'>あなたの回答</h2>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f"<div style='text-align: center;'>テーブル：{st.session_state.answers[0]}</div>",
+        unsafe_allow_html=True,
+    )
+    for num, value in enumerate(st.session_state.answers, 0):
+        if num != 0:
+            st.markdown(
+                f"<div style='text-align: center;'>第{num}問：{value}</div>",
+                unsafe_allow_html=True,
+            )
+    ## バルーンを飛ばす
+
+
+# ページ遷移のための判定
+if st.session_state.page_id == "main":
+    main()
+
+if st.session_state.page_id == "page1":
+    page1()
+
+if st.session_state.page_id == "page2":
+    page2()
+
+if st.session_state.page_id == "page3":
+    page3()
+
+if st.session_state.page_id == "page4":
+    page4()
+
+if st.session_state.page_id == "page5":
+    page5()
+
+if st.session_state.page_id == "page_end":
+    page_end()
