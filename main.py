@@ -208,16 +208,21 @@ if st.session_state.page_id == "page1":
     page1()
 
 if st.session_state.page_id == "page2":
+    time.sleep(5)
     page2()
 
 if st.session_state.page_id == "page3":
+    time.sleep(5)
     page3()
 
 if st.session_state.page_id == "page4":
+    time.sleep(5)
     page4()
 
 if st.session_state.page_id == "page5":
+    time.sleep(5)
     page5()
 
 if st.session_state.page_id == "page_end":
+    time.sleep(5)
     page_end()
