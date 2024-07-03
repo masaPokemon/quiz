@@ -1,5 +1,5 @@
 import streamlit as st
-
+import time
 # ページのタイトル設定
 st.set_page_config(
     page_title="Wedding Quiz",
