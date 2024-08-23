@@ -22,7 +22,7 @@ tokuten = 0
 # 最初のページ
 def main():
     st.markdown(
-        "<h1 style='text-align: center;'>💕💕Wedding Quiz💕💕</h1>",
+        "<h1 style='text-align: center;'>Quiz</h1>",
         unsafe_allow_html=True,
     )
 
