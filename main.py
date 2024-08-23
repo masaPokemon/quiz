@@ -169,6 +169,7 @@ def page5():
             int = "str " + "int"
             print(int)
         """
+        st.code(code, language="python")
         st.radio("上のコードを実行すると何とprintされる？", ["str int", "strint", "エラー", "表示されない"], key="answer5")
         st.form_submit_button("回答", on_click=change_page)
 
