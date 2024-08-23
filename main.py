@@ -46,7 +46,7 @@ def page1():
         if st.session_state.answer1 == "何もprintされない":
             st.session_state.answers.append(st.session_state.answer1)
             st.session_state.page_id = "page2"
-            tokuten += 1
+            tokuten + 1
         else:
             st.session_state.answers.append(st.session_state.answer1)
             st.session_state.page_id = "page2"
@@ -72,7 +72,7 @@ def page2():
         if st.session_state.answer2 == "エラー":
             st.session_state.answers.append(st.session_state.answer2)
             st.session_state.page_id = "page3"
-            tokuten += 1
+            tokuten + 1
         else:
             st.session_state.answers.append(st.session_state.answer2)
             st.session_state.page_id = "page3"
@@ -99,7 +99,7 @@ def page3():
         if st.session_state.answer3 == "エラー":
             st.session_state.answers.append(st.session_state.answer3)
             st.session_state.page_id = "page4"
-            tokuten += 1
+            tokuten + 1
         else:
             st.session_state.answers.append(st.session_state.answer3)
             st.session_state.page_id = "page4"
@@ -126,7 +126,7 @@ def page4():
         if st.session_state.answer4 == "エラー":
             st.session_state.answers.append(st.session_state.answer4)
             st.session_state.page_id = "page5"
-            tokuten += 1
+            tokuten + 1
         else:
             st.session_state.answers.append(st.session_state.answer4)
             st.session_state.page_id = "page5"
@@ -152,7 +152,7 @@ def page5():
         if st.session_state.answer4 == "str  \n  int":
             st.session_state.answers.append(st.session_state.answer4)
             st.session_state.page_id = "page_end"
-            tokuten += 1
+            tokuten + 1
         else:
             st.session_state.answers.append(st.session_state.answer4)
             st.session_state.page_id = "page_end"
