@@ -149,7 +149,7 @@ def page5():
     )
 
     def change_page():
-        if st.session_state.answer4 == "str  \n  int":
+        if st.session_state.answer4 == "str \n int":
             st.session_state.answers.append(st.session_state.answer4)
             st.session_state.page_id = "page_end"
             tokuten + 1
@@ -164,7 +164,7 @@ def page5():
             int = "str  \n  int"
             print(int)
         """
-        st.radio("上のコードを実行すると何とprintされる？", ["str  \n  int", "str    int", "エラー", "表示されない"], key="answer5")
+        st.radio("上のコードを実行すると何とprintされる？", ["str \n int", "str    int", "エラー", "表示されない"], key="answer5")
         st.form_submit_button("回答", on_click=change_page)
 
 
