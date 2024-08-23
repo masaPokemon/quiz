@@ -161,10 +161,10 @@ def page5():
         code = """
             int = 100
             int += 100
-            int = "str  \n  int"
+            int = "str + int"
             print(int)
         """
-        st.radio("上のコードを実行すると何とprintされる？", ["str int", "strint", "エラー", "表示されない"], key="answer5")
+        st.radio("上のコードを実行すると何とprintされる？", ["str+int", "strint", "エラー", "表示されない"], key="answer5")
         st.form_submit_button("回答", on_click=change_page)
 
 
