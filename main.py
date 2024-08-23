@@ -2,7 +2,7 @@ import streamlit as st
 
 # ページのタイトル設定
 st.set_page_config(
-    page_title="Wedding Quiz",
+    page_title="Quiz",
 )
 
 # セッション情報の初期化
@@ -46,6 +46,7 @@ def page1():
         if st.session_state.answer1 == "何もprintされない":
             st.session_state.answers.append(st.session_state.answer1)
             st.session_state.page_id = "page2"
+            st.balloons()
             tokuten + 1
         else:
             st.session_state.answers.append(st.session_state.answer1)
@@ -72,6 +73,7 @@ def page2():
         if st.session_state.answer2 == "エラー":
             st.session_state.answers.append(st.session_state.answer2)
             st.session_state.page_id = "page3"
+            st.balloons()
             tokuten + 1
         else:
             st.session_state.answers.append(st.session_state.answer2)
@@ -100,6 +102,7 @@ def page3():
             st.session_state.answers.append(st.session_state.answer3)
             st.session_state.page_id = "page4"
             tokuten + 1
+            st.balloons()
         else:
             st.session_state.answers.append(st.session_state.answer3)
             st.session_state.page_id = "page4"
@@ -127,6 +130,7 @@ def page4():
             st.session_state.answers.append(st.session_state.answer4)
             st.session_state.page_id = "page5"
             tokuten + 1
+            st.balloons()
         else:
             st.session_state.answers.append(st.session_state.answer4)
             st.session_state.page_id = "page5"
@@ -153,6 +157,7 @@ def page5():
             st.session_state.answers.append(st.session_state.answer4)
             st.session_state.page_id = "page_end"
             tokuten + 1
+            st.balloons()
         else:
             st.session_state.answers.append(st.session_state.answer4)
             st.session_state.page_id = "page_end"
