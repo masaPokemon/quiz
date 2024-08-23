@@ -177,6 +177,6 @@ def setdb():
     chat_id=1,
     username=username,
     name=name,
-    message=,
+    message="test",
     sent_time=datetime.datetime.now(),
   )
