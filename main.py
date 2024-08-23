@@ -149,7 +149,7 @@ def page5():
     )
 
     def change_page():
-        if st.session_state.answer4 == "str  \n  int"
+        if st.session_state.answer4 == "str  \n  int":
             st.session_state.answers.append(st.session_state.answer4)
             st.session_state.page_id = "page_end"
             tokuten += 1
