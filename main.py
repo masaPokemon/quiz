@@ -171,7 +171,7 @@ def page5():
 # 最終ページ
 def page_end():
 
-    username = st.input("名前を教えてください。")
+    username = st.text_input("名前を教えてください。")
 
     st.markdown(
         "<h1 style='text-align: center;'>回答ありがとう🎉</h1>",
