@@ -18,7 +18,7 @@ hide_menu_style = """
         </style>
         """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
-
+tokuten = 0
 # 最初のページ
 def main():
     st.markdown(
@@ -43,7 +43,7 @@ def page1():
     )
 
     def change_page():
-        if st.session_state.answer1 = "何もprintされない":
+        if st.session_state.answer1 == "何もprintされない":
             st.session_state.answers.append(st.session_state.answer1)
             st.session_state.page_id = "page2"
             tokuten += 1
@@ -69,7 +69,7 @@ def page2():
     )
 
     def change_page():
-        if st.session_state.answer1 = "エラー":
+        if st.session_state.answer2 == "エラー":
             st.session_state.answers.append(st.session_state.answer2)
             st.session_state.page_id = "page3"
             tokuten += 1
@@ -96,7 +96,7 @@ def page3():
     )
 
     def change_page():
-        if st.session_state.answer1 = "エラー":
+        if st.session_state.answer3 == "エラー":
             st.session_state.answers.append(st.session_state.answer3)
             st.session_state.page_id = "page4"
             tokuten += 1
@@ -123,11 +123,21 @@ def page4():
     )
 
     def change_page():
-        st.session_state.answers.append(st.session_state.answer4)
-        st.session_state.page_id = "page5"
+        if st.session_state.answer4 == "エラー":
+            st.session_state.answers.append(st.session_state.answer4)
+            st.session_state.page_id = "page5"
+            tokuten += 1
+        else:
+            st.session_state.answers.append(st.session_state.answer4)
+            st.session_state.page_id = "page5"
 
     with st.form("f4"):
-        st.radio("", ["", "", "", ""], key="answer4")
+        code = '''
+            int1 = 100
+            print("str" + "int1") 
+        '''
+        st.code(code, language="python")
+        st.radio("上のコードを実行すると何とprintされる？", ["str int1", "strint1", "str 100", "エラー"], key="answer4")
         st.form_submit_button("回答", on_click=change_page)
 
 
@@ -139,18 +149,29 @@ def page5():
     )
 
     def change_page():
-        st.session_state.answers.append(st.session_state.answer5)
-        st.session_state.page_id = "page_end"
+        if st.session_state.answer4 == "str  \n  int"
+            st.session_state.answers.append(st.session_state.answer4)
+            st.session_state.page_id = "page_end"
+            tokuten += 1
+        else:
+            st.session_state.answers.append(st.session_state.answer4)
+            st.session_state.page_id = "page_end"
 
     with st.form("f5"):
-        st.radio("", ["", "", "", "", ""], key="answer5")
+        code = """
+            int = 100
+            int += 100
+            int = "str  \n  int"
+            print(int)
+        """
+        st.radio("上のコードを実行すると何とprintされる？", ["str  \n  int", "str    int", "エラー", "表示されない"], key="answer5")
         st.form_submit_button("回答", on_click=change_page)
 
 
 # 最終ページ
 def page_end():
 
-    # 回答内容をサーバに送ったりなんなり
+    username = st.input("名前を教えてください。")
 
     st.markdown(
         "<h1 style='text-align: center;'>回答ありがとう🎉</h1>",
@@ -209,6 +230,6 @@ def setdb():
     chat_id=1,
     username=username,
     name=name,
-    message="test",
+    message=tokuten,
     sent_time=datetime.datetime.now(),
   )
