@@ -43,11 +43,21 @@ def page1():
     )
 
     def change_page():
-        st.session_state.answers.append(st.session_state.answer1)
-        st.session_state.page_id = "page2"
+        if st.session_state.answer1 = "何もprintされない":
+            st.session_state.answers.append(st.session_state.answer1)
+            st.session_state.page_id = "page2"
+            tokuten += 1
+        else:
+            st.session_state.answers.append(st.session_state.answer1)
+            st.session_state.page_id = "page2"
 
     with st.form("f1"):
-        st.radio("", ["", "", ""], key="answer1")
+        code = '''
+            def hello():
+                print("Hello")
+        '''
+        st.code(code, language="python")
+        st.radio("上のコードを実行するとなんとprintされる？", ["Hello","hello", "何もprintされない"], key="answer1")
         st.form_submit_button("回答", on_click=change_page)
 
 
@@ -59,11 +69,22 @@ def page2():
     )
 
     def change_page():
-        st.session_state.answers.append(st.session_state.answer2)
-        st.session_state.page_id = "page3"
+        if st.session_state.answer1 = "エラー":
+            st.session_state.answers.append(st.session_state.answer2)
+            st.session_state.page_id = "page3"
+            tokuten += 1
+        else:
+            st.session_state.answers.append(st.session_state.answer2)
+            st.session_state.page_id = "page3"
 
     with st.form("f2"):
-        st.radio("", ["", "", ""], key="answer2")
+        code = '''
+            int1 = 100
+            print("str" + int1) 
+        '''
+        st.code(code, language="python")
+        
+        st.radio("上のコードを実行するとどうなる", ["str100", "str 100", "エラー"], key="answer2")
         st.form_submit_button("回答", on_click=change_page)
 
 
@@ -75,11 +96,22 @@ def page3():
     )
 
     def change_page():
-        st.session_state.answers.append(st.session_state.answer3)
-        st.session_state.page_id = "page4"
+        if st.session_state.answer1 = "エラー":
+            st.session_state.answers.append(st.session_state.answer3)
+            st.session_state.page_id = "page4"
+            tokuten += 1
+        else:
+            st.session_state.answers.append(st.session_state.answer3)
+            st.session_state.page_id = "page4"
 
     with st.form("f3"):
-        st.radio("", ["", "", "", ""], key="answer3")
+        code = '''
+            number = "10"
+            print("str" + " " + "number") 
+        '''
+        st.code(code, language="python")
+        
+        st.radio("上のコードを実行するとなんとなる", ["str number", "strnumber", "number + str", "エラー"], key="answer3")
         st.form_submit_button("回答", on_click=change_page)
 
 
