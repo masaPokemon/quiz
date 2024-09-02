@@ -20,8 +20,9 @@ conn.execute('''
 ''')
 if st.button("QRコードを表示"):
   point = qrcodeButton()
-  conn.execute(f'''
+  point2 = conn.execute('''
     INSERT INTO Point (userPoint)
     VALUES ('{userPoint - point}')
   ''')
   conn.commit()
+st.title(point2)
