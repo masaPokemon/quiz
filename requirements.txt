@@ -1,2 +1,12 @@
+numpy
 streamlit
+streamlit-elements
+streamlit-player
+streamlit-aggrid
+stqdm
+unidecode
 pytube
+ffmpeg-python
+yt-dlp
+sponsorblock.py
+python-dotenv
