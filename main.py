@@ -7,7 +7,8 @@ ydl_opts = {
     'format': 'best'
 }
 text = st.text_input("URL：")
-#動画のURLを指定
-with YoutubeDL(ydl_opts) as ydl:
-    ydl.download([text])
-files.download('video.mp4')
+
+if text != "":#動画のURLを指定
+    with YoutubeDL(ydl_opts) as ydl:
+        ydl.download([text])
+    files.download('video.mp4')
