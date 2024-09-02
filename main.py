@@ -5,7 +5,7 @@ import streamlit as st
 fmt = "video"
 def download_file(stream, fmt):
     """  """
-    title = stream.title + '.'+ stream_final.subtype
+    title = stream.title + '.'+ 'mp4'
 
     stream.download(filename=title)
     
