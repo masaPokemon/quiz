@@ -17,5 +17,5 @@ conn.execute('''
   CREATE TABLE IF NOT EXISTS Point ( 
     id INTEGER PRIMARY KEY, 
     point TEXT NOT NULL, 
-) 
+  ) 
 ''')
