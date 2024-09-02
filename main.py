@@ -1,81 +1,74 @@
-# 音声を日本語に翻訳
+from streamlit_mic_recorder import mic_recorder # pour enregistrer l'audio
+import streamlit as st # pour le rendering sur page web
+import io # pour pouvoir manipuler le flux audio
+from speechbrain.pretrained import EncoderASR # indispensable au modèle speechbrain
+import os # pour pouvoir ouvrir/fermer un fichier
+import torch
 
-######## Streamlitの設定 ########
-import streamlit as st
+device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
-st.title("音声で入力する")
-st.write("マイクに話しかけてください。")
-
-######## 録音関係の設定 ########
-import pyaudio
-import wave
-
-p = pyaudio.PyAudio()  # PyAudioのインスタンス化
-
-######## 音声翻訳関係の設定 ########
-import openai
-
-# ハルっているか判定する関数
-def hallcinated_transcription(t:str):
-    hallcination_texts = ['ご視聴ありがとう', '最後まで視聴','最後までご視聴','視聴してくださって', '本日はご覧いただき', 'おやすみなさい']
-    return any(phrase in t for phrase in hallcination_texts)
-
-######## 録音のフラグ ########
-if 'recording' not in st.session_state:
-    st.session_state.recording = False
-
-######## 録音停止ボタン ########
-if st.button("停止", key="stop_button"):
-    st.session_state.recording = False
-
-######## 録音開始ボタン ########
-if st.button("おしゃべり", key="start_button"):
-    st.session_state.recording = True
-    st.write("何か話しかけてください")
-
-    chunk = 1024  # フレーム単位での音声の読み込みサイズ
-    sample_format = pyaudio.paInt16  # 16ビットの音声
-    channels = 1  # モノラル音声
-    rate = 16000  # サンプリングレート
-    record_seconds = 2
-
-    stream = p.open(format=sample_format,
-                    channels=channels,
-                    rate=rate,
-                    input=True,
-                    frames_per_buffer=chunk)
+def BrainSTT(start_prompt="Enregistrer",stop_prompt="Arrêter",just_once=False,use_container_width=False,language=None,callback=None,args=(),kwargs={}):
+    if not '_last_speech_to_text_transcript_id' in st.session_state:
+        st.session_state._last_speech_to_text_transcript_id=0
+    if not '_last_speech_to_text_transcript' in st.session_state:
+        st.session_state._last_speech_to_text_transcript=None
+    audio = mic_recorder(start_prompt=start_prompt,stop_prompt=stop_prompt,just_once=just_once,use_container_width=use_container_width)
+    new_output=False
+    if audio is None:
+        output=None
+    else:
+        st.write("audio n'est pas none")
+        st.write("id audio : " + audio[id])
+        id=audio['id']
+        st.write("id = audio[id]")
+        new_output=(id>st.session_state._last_speech_to_text_transcript_id)
+        st.write("new_output = id>st.session_state._last_speech_to_text_transcript_id")
+        if new_output:
+            st.write("new_output n'est pas null")
+            output=None
+            st.write("output = None")
+            st.session_state._last_speech_to_text_transcript_id=id
+            st.write("st.session_state._last_speech_to_text_transcript_id = id")
+            audio_BIO = io.BytesIO(audio['bytes'])
+            st.write("audio_BIO se remplit")
+            audio_BIO.name='audio.mp3'
+            st.write("audio_BIO.name = 'audio.mp3'")
+            success=False
+            st.write("success = False")
+            err=0
+            st.write("err =" + err)
+            while not success and err<3: #Retry up to 3 times in case ...
+                try:
+                    st.write("début du try")
+                    transcript = st.session_state.openai_client.audio.transcriptions.create(
+                        model="speechbrain/asr-wav2vec2-commonvoice-fr",
+                        file=audio_BIO,
+                        language=language
+                    )
+                    st.write("transcript en cours")
+                except Exception as e:
+                    print(str(e)) # log the exception in the terminal
+                    err+=1
+                else:
+                    st.write("transcription finie")
+                    success=True
+                    st.write ("success = " + success)
+                    output=transcript.text
+                    st.write("output = transcript.text")
+                    st.session_state._last_speech_to_text_transcript=output
+                    st.write("st.session_state._last_speech_to_text_transcript = output")
+        elif not just_once:
+            output=st.session_state._last_speech_to_text_transcript
+            st.write("output = st.session_state._last_speech_to_text_transcript")
+        else:
+            output=None
+            st.write("dernier output = None")
+    if new_output and callback:
+        st.write("new_output and callback:")
+        callback(*args,**kwargs)
+    return output
     
-    for i in range(5):
 
-        data = stream.read(chunk, exception_on_overflow=False)
-
-        frames = []
-        for _ in range(0, int(rate / chunk * record_seconds)):
-            data = stream.read(chunk)
-            frames.append(data)
-
-        # waveを使って、framesをwavファイルとして書き出す
-        with wave.open(f'output{i}.wav', 'wb') as wf:
-            wf.setnchannels(channels)
-            wf.setsampwidth(p.get_sample_size(sample_format))
-            wf.setframerate(rate)
-            wf.writeframes(b''.join(frames))
-
-        # openaiのtranscriptionsを使って音声をテキスト変換
-        transcription = openai.audio.transcriptions.create(
-            file=open(f'output{i}.wav', "rb"),
-            model="whisper-1",
-            language="ja"
-        )
-        
-        print(f'---------{i}---------')
-        print(transcription.text,f'。ハルシネーション:{hallcinated_transcription(transcription.text)}')
-
-        if hallcinated_transcription(transcription.text) is False:
-            st.write(transcription.text)
-
-
-    # トークが終わったら録音ストリームを閉じる
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
+text=BrainSTT(language='fr')
+if text:
+    st.write(text)
