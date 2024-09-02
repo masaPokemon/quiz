@@ -1,2 +1,2 @@
 streamlit
-langchain
+audio_recorder_streamlit
