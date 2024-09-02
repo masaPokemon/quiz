@@ -11,12 +11,11 @@ if qrcodeButton:
     st.write(qr_code)
 
 # SQLiteに接続する
-conn = sqlite3.connect('/databse.db')
-# テーブルを作成する conn.execute('''
- CREATE TABLE IF NOT EXISTS sleep_data ( 
-　　　id INTEGER PRIMARY KEY, 
-　　　date TEXT NOT NULL, 
-　　　sleep_time TEXT NOT NULL, 
-　　　wake_time TEXT NOT NULL５。 
+conn = sqlite3.connect('resource/database.db')
+# テーブルを作成する 
+conn.execute('''
+  CREATE TABLE IF NOT EXISTS Point ( 
+    id INTEGER PRIMARY KEY, 
+    point TEXT NOT NULL, 
 ) 
 ''')
