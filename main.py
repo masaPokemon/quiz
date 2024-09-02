@@ -1,14 +1,18 @@
-from yt_dlp import YoutubeDL
+from pytube import YouTube, StreamQuery
 import streamlit as st
 
 #最高の画質と音質を動画をダウンロードする
-ydl_opts = {
-    'outtmpl': 'video.mp4',
-    'format': 'best'
-}
+fmt = "video"
+def download_file(stream, fmt):
+    """  """
+    if fmt == 'audio':
+        title = stream.title + ' audio.'+ stream_final.subtype
+    else:
+        title = stream.title + '.'+ stream_final.subtype
+
+    stream.download(filename=title)
+    
 text = st.text_input("URL：")
 
 if text != "":#動画のURLを指定
-    with YoutubeDL(ydl_opts) as ydl:
-        ydl.download([text])
-    files.download('video.mp4')
+    download_file(text, fmt)
