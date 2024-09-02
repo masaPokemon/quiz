@@ -1,7 +1,7 @@
 import streamlit as st  
 from streamlit_qrcode_scanner import qrcode_scanner  
 import sqlite3 
-
+point2 = None
 def qrcodeButton():
   qr_code = qrcode_scanner(key='qrcode_scanner')  
 
