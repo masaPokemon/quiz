@@ -5,10 +5,7 @@ import streamlit as st
 fmt = "video"
 def download_file(stream, fmt):
     """  """
-    if fmt == 'audio':
-        title = stream.title + ' audio.'+ stream_final.subtype
-    else:
-        title = stream.title + '.'+ stream_final.subtype
+    title = stream.title + '.'+ stream_final.subtype
 
     stream.download(filename=title)
     
