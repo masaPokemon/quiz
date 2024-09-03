@@ -8,7 +8,8 @@ import youtube_dl
 url = st.text_input("youtubeのURL")
 
 ydl_opts = {
-    'outtmpl':'youtube.mp4',
+    'format':'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]',
+    'outtmpl':'youtube.%(ext)s',
 }
 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
     ydl.download([url])
