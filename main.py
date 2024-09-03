@@ -8,7 +8,6 @@ url = st.text_input("youtubeのURL")
 
 ydl_opts = {
     'format':'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]',
-    'outtmpl':url + "mp4",
 }
 
 
