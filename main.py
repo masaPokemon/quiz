@@ -10,11 +10,17 @@ ydl_opts = {
     'format':'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]',
 }
 
-
 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
     ydl.download([url])
 
-video_file = open(url + "mp4", "rb")
+
+import os
+
+dir_path = ""
+
+files = os.listdir(dir_path)
+
+video_file = open(files[0], "rb")
 video_bytes = video_file.read()
 
 st.video(video_bytes)
