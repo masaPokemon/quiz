@@ -1,11 +1,16 @@
 import streamlit as st
-import urllib.request
 
-url = st.text_input("youtubeのURL")
-urllib.request.urlretrieve(url, 'youtube.mp4')
-st.video
+VIDEO_URL = "https://example.com/not-youtube.mp4"
+st.video(VIDEO_URL)
 
-video_file = open("youtube.mp4", "rb")
-video_bytes = video_file.read()
+import streamlit as st
+#import urllib.request
 
-st.video(video_bytes)
+#url = st.text_input("youtubeのURL")
+#urllib.request.urlretrieve(url, 'youtube.mp4')
+#st.video
+
+#video_file = open("youtube.mp4", "rb")
+#video_bytes = video_file.read()
+
+#st.video(video_bytes)
