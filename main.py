@@ -6,7 +6,9 @@ import youtube_dl
 
 url = st.text_input("youtubeのURL")
 
-ydl_opts = {}
+ydl_opts = {
+    'outtmpl':'youtube.mp4',
+}
 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
     ydl.download([url])
 
