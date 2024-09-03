@@ -2,9 +2,9 @@ import streamlit as st
 from pytube import YouTube, StreamQuery
 url = st.text_input("youtubeのURL")
 if url != "":
-    tube = YouTube(url)
-    tube = tube.streams
-    tube.download(filename="video.mp4")
+    tube1 = YouTube(url)
+    tube2 = tube1.streams
+    tube2.download(filename="video.mp4")
     video_file = open("video.mp4", "rb")
     video_bytes = video_file.read()
 
