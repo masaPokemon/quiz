@@ -3,7 +3,7 @@ import streamlit as st
 VIDEO_URL = "https://example.com/not-youtube.mp4"
 st.video(VIDEO_URL)
 
-import streamlit as st
+#import streamlit as st
 #import urllib.request
 
 #url = st.text_input("youtubeのURL")
