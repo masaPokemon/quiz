@@ -2,7 +2,7 @@ import streamlit as st
 import urllib.request
 
 url = st.text_input("youtubeのURL")
-urllib.request.urlretrieve(url, 'youtube.mp4')
+urllib.request.urlretrieve(url, "./youtube.mp4")
 
 video_file = open("youtube.mp4", "rb")
 video_bytes = video_file.read()
