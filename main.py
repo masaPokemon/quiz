@@ -1,7 +1,7 @@
 import streamlit as st
 import urllib.request
 
-from __future__ import unicode_literals
+#from __future__ import unicode_literals
 import youtube_dl
 
 url = st.text_input("youtubeのURL")
