@@ -7,7 +7,6 @@ import urllib.request
 url = st.text_input("youtubeのURL")
 
 ydl_opts = {
-    'format':'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]',
 }
 
 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
