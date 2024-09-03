@@ -1,7 +1,7 @@
 import streamlit as st
 from pytube import YouTube, StreamQuery
 vid_url = st.text_input("youtubeのURL")
-yt = YouTube(url)
+yt = YouTube(vid_url).streams.first().download()
 if yt != "":
     with open(yt,'rb') as fh:
         st.download_button(
