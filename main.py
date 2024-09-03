@@ -1,6 +1,6 @@
 import streamlit as st
 
-VIDEO_URL = "https://example.com/not-youtube.mp4"
+VIDEO_URL = st.text_input("YoutubeのURL")
 st.video(VIDEO_URL)
 
 #import streamlit as st
