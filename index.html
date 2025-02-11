@@ -1,1 +1,60 @@
-<img src="download-image-png 4.png">
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Javaスクリプト</title>
+    <script type="text/javascript" language="javascript">
+        function Initialize() {
+            document.getElementById('<%=MacAddressTextBox.ClientID %>').value = GetMacAddress();
+            document.getElementById('<%=LocalPCNameTextBox.ClientID %>').value = GetComputerName();
+        }
+
+        // 有効なMacアドレスで始めに取得した値を返します。
+        function GetMacAddress() {
+            var obj = new ActiveXObject("WbemScripting.SWbemLocator");
+            var s = obj.ConnectServer(".");
+            var properties = s.ExecQuery("SELECT * FROM Win32_NetworkAdapterConfiguration");
+            var e = new Enumerator(properties);
+            while (!e.atEnd()) {
+                e.moveNext();
+                var p = e.item();
+                if (!p) continue;
+                if (null != p.MACAddress) {
+                    return p.MACAddress;
+                }
+            }
+            return null;
+        }
+
+        // ローカルPC名を返します。。
+        function GetComputerName() {
+            var objNetWork = new ActiveXObject("WScript.Network");
+            return objNetWork.ComputerName;
+        }
+    </script>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <input type="button" value="端末から各種情報の取得" onclick="Initialize()" />
+    <table>
+        <tr>
+            <th>
+                マックアドレス
+            </th>
+            <td>
+                <asp:TextBox ID="MacAddressTextBox" runat="server"></asp:TextBox>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                ローカルPC名
+            </th>
+            <td>
+                <asp:TextBox ID="LocalPCNameTextBox" runat="server"></asp:TextBox>
+            </td>
+        </tr>
+    </table>
+    <asp:Button ID="Button1" runat="server" Text="Button" onclick="Button1_Click" />
+    </form>
+</body>
+</html>
