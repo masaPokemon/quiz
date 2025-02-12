@@ -1,156 +1,151 @@
-<?php
-/** getGPSdata.php
- * 携帯電話から送信した位置情報を表示する（DoCoMo専用）
- *
- * @copyright	(c)studio pahoo
- * @author		パパぱふぅ
- * @version		1.0  2007/10/07
-*/
-mb_internal_encoding('SJIS');
-mb_regex_encoding('SJIS');
-$myself = basename($_SERVER['SCRIPT_NAME']);
-
-/**
- * 登録携帯電話のシリアル番号リスト
- * @global	bool $CellSerials
-*/
-$CellSerials = array(
-	'DoCoMo/2.0 xxx(xxxxx)'
-);
-
-/**
- * 登録している携帯電話以外かどうかを調べる
- * @param	string $serials シリアル番号テーブル
- * @return	bool TRUE/FALSE
-*/
-function isCellPhone($serials) {
-	//登録シリアルがなければ無条件でTRUE
-	if (count($serials) == 0)		return TRUE;
-
-	//登録シリアルと合致するかどうかチェック
-	foreach ($serials as $val) {
-		if ($_SERVER['HTTP_USER_AGENT'] == $val)	return TRUE;
-	}
-	return FALSE;
-}
-
-/**
- * RFC3339表記日時を返す
- * @param	date $tt 時間
- * @return	string RFC3339表記日時
-*/
-function get_gmdate($tt) {
-	return (date("Y-m-d", $tt) . "T" . date("H:i:s", $tt) . "+09:00");
-}
-
-/**
- * 日本測地系を世界測地系に変換する
- * @param	double $long 経度（日本測地系）
- * @param	double $lat  緯度（日本測地系）
- * @return	double array(経度,緯度)（世界測地系）
-*/
-function tokyo_wgs84($long, $lat) {
-	$glong = $long - $lat * 0.000046038 - $long * 0.000083043 + 0.010040;
-	$glat  = $lat  - $lat * 0.00010695  + $long * 0.000017464 + 0.0046017;
-	return array($glong, $glat);
-}
-
-/**
- * 世界測地系を日本測地系に変換する
- * @param	double $long 経度（世界測地系）
- * @param	double $lat  緯度（世界測地系）
- * @return	double array(経度,緯度)（日本測地系）
-*/
-function wgs84_tokyo($long, $lat) {
-	$glong = $long + $lat * 0.000046047 + $long * 0.000083049 - 0.010041;
-	$glat  = $lat  + $lat * 0.00010696  - $long * 0.000017467 - 0.0046020;
-	return array($glong, $glat);
-}
-
-/**
- * 位置情報を小数表記に変換する
- * @param	string $geo DoCoMoの位置情報
- * @return	double 位置情報（小数表記）
-*/
-function DoCoMo2Geo($geo) {
-	preg_match("/([\+\-|0-9]+)[ \.]([0-9]+)[ \.]([\.|0-9]+)/", $geo, $arr);
-
-	$g = 0;
-	if (isset($arr[1]))		$g += $arr[1];
-	if (isset($arr[2]))		$g += ($arr[2] / 60);
-	if (isset($arr[3]))		$g += ($arr[3] / 3600);
-
-	return $g;
-}
-
-/**
- * 位置情報を世界測地系に統一する
- * @param	array $items 位置情報
- *					double 'latitude'  緯度（小数表記）
- *					double 'longitude' 経度（小数表記）
- *					string 'geo'       測地系（tokyo:日本測地系，wgs84:世界測地系）
-*/
-function convertGeo(&$items) {
-	//緯度・経度を小数表記に変換する
-	$latitude  = DoCoMo2Geo($items['latitude']);
-	$longitude = DoCoMo2Geo($items['longitude']);
-
-	if (preg_match('/tokyo/i', $items['geo']) != 0) {
-		list($longitude, $latitude) = tokyo_wgs84($longitude, $latitude);
-	}
-
-	$items['longitude'] = $longitude;
-	$items['latitude']  = $latitude;
-	$items['geo']       = 'wgs84';
-}
-
-// メインプログラム =========================================================
-$items = array();
-
-//データ取得
-$items['latitude']  = isset($_GET['lat'])   ? $_GET['lat'] : '';
-$items['longitude'] = isset($_GET['lon'])   ? $_GET['lon'] : '';
-$items['geo']       = isset($_GET['geo'])   ? $_GET['geo'] : '';
-$items['x-acc']     = isset($_GET['x-acc']) ? $_GET['x-acc'] : '';
-$items['premiere']  = get_gmdate(time());		//現在の時刻をGMT表記に変換する
-
-//世界測地系に統一する
-if ($items['latitude'] != '')	convertGeo($items);
-
-// 表示処理 =================================================================
-echo <<< EOF
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-<title>位置情報参照</title>
-<meta name="ROBOTS" content="NOINDEX,FOLLOW" />
+    <meta charset="Shift_JIS">
+    <meta name="ROBOTS" content="NOINDEX,FOLLOW">
+    <title>位置情報参照</title>
 </head>
 <body>
-<h1>■位置情報参照</h1>
-<a href="{$myself}" lcs>&gt;&gt;位置情報参照&lt;&lt;</a>
-<hr />
+    <?php
+    /** getGPSdata.php
+     * 携帯電話から送信した位置情報を表示する（DoCoMo専用）
+     *
+     * @copyright	(c)studio pahoo
+     * @author		パパぱふぅ
+     * @version		1.0  2007/10/07
+    */
+    mb_internal_encoding('SJIS');
+    mb_regex_encoding('SJIS');
+    $myself = basename($_SERVER['SCRIPT_NAME']);
 
-EOF;
-//登録端末なら結果表示
-if (isCellPhone($CellSerials) == TRUE) {
-	echo <<< EOF
-<table border="0">
-<tr><td>状況</td><td>{$msg}</td></tr>
-<tr><td>時刻</td><td>{$items['premiere']}</td></tr>
-<tr><td>緯度</td><td>{$items['latitude']}</td></tr>
-<tr><td>経度</td><td>{$items['longitude']}</td></tr>
-<tr><td>精度</td><td>{$items['x-acc']}</td></tr>
-</table>
+    /**
+     * 登録携帯電話のシリアル番号リスト
+     * @global	bool $CellSerials
+    */
+    $CellSerials = array(
+        'DoCoMo/2.0 xxx(xxxxx)'
+    );
+
+    /**
+     * 登録している携帯電話以外かどうかを調べる
+     * @param	string $serials シリアル番号テーブル
+     * @return	bool TRUE/FALSE
+    */
+    function isCellPhone($serials) {
+        if (count($serials) == 0) return TRUE;
+
+        foreach ($serials as $val) {
+            if ($_SERVER['HTTP_USER_AGENT'] == $val) return TRUE;
+        }
+        return FALSE;
+    }
+
+    /**
+     * RFC3339表記日時を返す
+     * @param	date $tt 時間
+     * @return	string RFC3339表記日時
+    */
+    function get_gmdate($tt) {
+        return (date("Y-m-d", $tt) . "T" . date("H:i:s", $tt) . "+09:00");
+    }
+
+    /**
+     * 日本測地系を世界測地系に変換する
+     * @param	double $long 経度（日本測地系）
+     * @param	double $lat  緯度（日本測地系）
+     * @return	double array(経度,緯度)（世界測地系）
+    */
+    function tokyo_wgs84($long, $lat) {
+        $glong = $long - $lat * 0.000046038 - $long * 0.000083043 + 0.010040;
+        $glat  = $lat  - $lat * 0.00010695  + $long * 0.000017464 + 0.0046017;
+        return array($glong, $glat);
+    }
+
+    /**
+     * 世界測地系を日本測地系に変換する
+     * @param	double $long 経度（世界測地系）
+     * @param	double $lat  緯度（世界測地系）
+     * @return	double array(経度,緯度)（日本測地系）
+    */
+    function wgs84_tokyo($long, $lat) {
+        $glong = $long + $lat * 0.000046047 + $long * 0.000083049 - 0.010041;
+        $glat  = $lat  + $lat * 0.00010696  - $long * 0.000017467 - 0.0046020;
+        return array($glong, $glat);
+    }
+
+    /**
+     * 位置情報を小数表記に変換する
+     * @param	string $geo DoCoMoの位置情報
+     * @return	double 位置情報（小数表記）
+    */
+    function DoCoMo2Geo($geo) {
+        preg_match("/([\+\-|0-9]+)[ \.]([0-9]+)[ \.]([\.|0-9]+)/", $geo, $arr);
+
+        $g = 0;
+        if (isset($arr[1])) $g += $arr[1];
+        if (isset($arr[2])) $g += ($arr[2] / 60);
+        if (isset($arr[3])) $g += ($arr[3] / 3600);
+
+        return $g;
+    }
+
+    /**
+     * 位置情報を世界測地系に統一する
+     * @param	array $items 位置情報
+     *					double 'latitude'  緯度（小数表記）
+     *					double 'longitude' 経度（小数表記）
+     *					string 'geo'       測地系（tokyo:日本測地系，wgs84:世界測地系）
+    */
+    function convertGeo(&$items) {
+        $latitude  = DoCoMo2Geo($items['latitude']);
+        $longitude = DoCoMo2Geo($items['longitude']);
+
+        if (preg_match('/tokyo/i', $items['geo']) != 0) {
+            list($longitude, $latitude) = tokyo_wgs84($longitude, $latitude);
+        }
+
+        $items['longitude'] = $longitude;
+        $items['latitude']  = $latitude;
+        $items['geo']       = 'wgs84';
+    }
+
+    // メインプログラム =========================================================
+    $items = array();
+
+    //データ取得
+    $items['latitude']  = isset($_GET['lat'])   ? $_GET['lat'] : '';
+    $items['longitude'] = isset($_GET['lon'])   ? $_GET['lon'] : '';
+    $items['geo']       = isset($_GET['geo'])   ? $_GET['geo'] : '';
+    $items['x-acc']     = isset($_GET['x-acc']) ? $_GET['x-acc'] : '';
+    $items['premiere']  = get_gmdate(time());		//現在の時刻をGMT表記に変換する
+
+    //世界測地系に統一する
+    if ($items['latitude'] != '') convertGeo($items);
+
+    // 表示処理 =================================================================
+    echo <<< EOF
+    <h1>■位置情報参照</h1>
+    <a href="{$myself}" lcs>&gt;&gt;位置情報参照&lt;&lt;</a>
+    <hr />
+    EOF;
+    //登録端末なら結果表示
+    if (isCellPhone($CellSerials) == TRUE) {
+        echo <<< EOF
+        <table border="0">
+        <tr><td>状況</td><td>{$msg}</td></tr>
+        <tr><td>時刻</td><td>{$items['premiere']}</td></tr>
+        <tr><td>緯度</td><td>{$items['latitude']}</td></tr>
+        <tr><td>経度</td><td>{$items['longitude']}</td></tr>
+        <tr><td>精度</td><td>{$items['x-acc']}</td></tr>
+        </table>
+        </body>
+        </html>
+        EOF;
+    } else {
+        echo <<< EOF
+        登録端末ではありません。
+        EOF;
+    }
+    ?>
 </body>
 </html>
-
-EOF;
-//登録端末以外ではエラー表示
-	} else {
-	echo <<< EOF
-登録端末ではありません。
-
-EOF;
-}
-?>
