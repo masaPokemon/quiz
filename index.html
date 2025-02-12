@@ -1,9 +1,9 @@
 <?php
 /** getGPSdata.php
- * Œg‘Ñ“d˜b‚©‚ç‘—M‚µ‚½ˆÊ’uî•ñ‚ğ•\¦‚·‚éiDoCoMoê—pj
+ * æºå¸¯é›»è©±ã‹ã‚‰é€ä¿¡ã—ãŸä½ç½®æƒ…å ±ã‚’è¡¨ç¤ºã™ã‚‹ï¼ˆDoCoMoå°‚ç”¨ï¼‰
  *
  * @copyright	(c)studio pahoo
- * @author		ƒpƒp‚Ï‚Ó‚£
+ * @author		ãƒ‘ãƒ‘ã±ãµã…
  * @version		1.0  2007/10/07
 */
 mb_internal_encoding('SJIS');
@@ -11,7 +11,7 @@ mb_regex_encoding('SJIS');
 $myself = basename($_SERVER['SCRIPT_NAME']);
 
 /**
- * “o˜^Œg‘Ñ“d˜b‚ÌƒVƒŠƒAƒ‹”Ô†ƒŠƒXƒg
+ * ç™»éŒ²æºå¸¯é›»è©±ã®ã‚·ãƒªã‚¢ãƒ«ç•ªå·ãƒªã‚¹ãƒˆ
  * @global	bool $CellSerials
 */
 $CellSerials = array(
@@ -19,15 +19,15 @@ $CellSerials = array(
 );
 
 /**
- * “o˜^‚µ‚Ä‚¢‚éŒg‘Ñ“d˜bˆÈŠO‚©‚Ç‚¤‚©‚ğ’²‚×‚é
- * @param	string $serials ƒVƒŠƒAƒ‹”Ô†ƒe[ƒuƒ‹
+ * ç™»éŒ²ã—ã¦ã„ã‚‹æºå¸¯é›»è©±ä»¥å¤–ã‹ã©ã†ã‹ã‚’èª¿ã¹ã‚‹
+ * @param	string $serials ã‚·ãƒªã‚¢ãƒ«ç•ªå·ãƒ†ãƒ¼ãƒ–ãƒ«
  * @return	bool TRUE/FALSE
 */
 function isCellPhone($serials) {
-	//“o˜^ƒVƒŠƒAƒ‹‚ª‚È‚¯‚ê‚Î–³ğŒ‚ÅTRUE
+	//ç™»éŒ²ã‚·ãƒªã‚¢ãƒ«ãŒãªã‘ã‚Œã°ç„¡æ¡ä»¶ã§TRUE
 	if (count($serials) == 0)		return TRUE;
 
-	//“o˜^ƒVƒŠƒAƒ‹‚Æ‡’v‚·‚é‚©‚Ç‚¤‚©ƒ`ƒFƒbƒN
+	//ç™»éŒ²ã‚·ãƒªã‚¢ãƒ«ã¨åˆè‡´ã™ã‚‹ã‹ã©ã†ã‹ãƒã‚§ãƒƒã‚¯
 	foreach ($serials as $val) {
 		if ($_SERVER['HTTP_USER_AGENT'] == $val)	return TRUE;
 	}
@@ -35,19 +35,19 @@ function isCellPhone($serials) {
 }
 
 /**
- * RFC3339•\‹L“ú‚ğ•Ô‚·
- * @param	date $tt ŠÔ
- * @return	string RFC3339•\‹L“ú
+ * RFC3339è¡¨è¨˜æ—¥æ™‚ã‚’è¿”ã™
+ * @param	date $tt æ™‚é–“
+ * @return	string RFC3339è¡¨è¨˜æ—¥æ™‚
 */
 function get_gmdate($tt) {
 	return (date("Y-m-d", $tt) . "T" . date("H:i:s", $tt) . "+09:00");
 }
 
 /**
- * “ú–{‘ª’nŒn‚ğ¢ŠE‘ª’nŒn‚É•ÏŠ·‚·‚é
- * @param	double $long Œo“xi“ú–{‘ª’nŒnj
- * @param	double $lat  ˆÜ“xi“ú–{‘ª’nŒnj
- * @return	double array(Œo“x,ˆÜ“x)i¢ŠE‘ª’nŒnj
+ * æ—¥æœ¬æ¸¬åœ°ç³»ã‚’ä¸–ç•Œæ¸¬åœ°ç³»ã«å¤‰æ›ã™ã‚‹
+ * @param	double $long çµŒåº¦ï¼ˆæ—¥æœ¬æ¸¬åœ°ç³»ï¼‰
+ * @param	double $lat  ç·¯åº¦ï¼ˆæ—¥æœ¬æ¸¬åœ°ç³»ï¼‰
+ * @return	double array(çµŒåº¦,ç·¯åº¦)ï¼ˆä¸–ç•Œæ¸¬åœ°ç³»ï¼‰
 */
 function tokyo_wgs84($long, $lat) {
 	$glong = $long - $lat * 0.000046038 - $long * 0.000083043 + 0.010040;
@@ -56,10 +56,10 @@ function tokyo_wgs84($long, $lat) {
 }
 
 /**
- * ¢ŠE‘ª’nŒn‚ğ“ú–{‘ª’nŒn‚É•ÏŠ·‚·‚é
- * @param	double $long Œo“xi¢ŠE‘ª’nŒnj
- * @param	double $lat  ˆÜ“xi¢ŠE‘ª’nŒnj
- * @return	double array(Œo“x,ˆÜ“x)i“ú–{‘ª’nŒnj
+ * ä¸–ç•Œæ¸¬åœ°ç³»ã‚’æ—¥æœ¬æ¸¬åœ°ç³»ã«å¤‰æ›ã™ã‚‹
+ * @param	double $long çµŒåº¦ï¼ˆä¸–ç•Œæ¸¬åœ°ç³»ï¼‰
+ * @param	double $lat  ç·¯åº¦ï¼ˆä¸–ç•Œæ¸¬åœ°ç³»ï¼‰
+ * @return	double array(çµŒåº¦,ç·¯åº¦)ï¼ˆæ—¥æœ¬æ¸¬åœ°ç³»ï¼‰
 */
 function wgs84_tokyo($long, $lat) {
 	$glong = $long + $lat * 0.000046047 + $long * 0.000083049 - 0.010041;
@@ -68,9 +68,9 @@ function wgs84_tokyo($long, $lat) {
 }
 
 /**
- * ˆÊ’uî•ñ‚ğ¬”•\‹L‚É•ÏŠ·‚·‚é
- * @param	string $geo DoCoMo‚ÌˆÊ’uî•ñ
- * @return	double ˆÊ’uî•ñi¬”•\‹Lj
+ * ä½ç½®æƒ…å ±ã‚’å°æ•°è¡¨è¨˜ã«å¤‰æ›ã™ã‚‹
+ * @param	string $geo DoCoMoã®ä½ç½®æƒ…å ±
+ * @return	double ä½ç½®æƒ…å ±ï¼ˆå°æ•°è¡¨è¨˜ï¼‰
 */
 function DoCoMo2Geo($geo) {
 	preg_match("/([\+\-|0-9]+)[ \.]([0-9]+)[ \.]([\.|0-9]+)/", $geo, $arr);
@@ -84,14 +84,14 @@ function DoCoMo2Geo($geo) {
 }
 
 /**
- * ˆÊ’uî•ñ‚ğ¢ŠE‘ª’nŒn‚É“ˆê‚·‚é
- * @param	array $items ˆÊ’uî•ñ
- *					double 'latitude'  ˆÜ“xi¬”•\‹Lj
- *					double 'longitude' Œo“xi¬”•\‹Lj
- *					string 'geo'       ‘ª’nŒnitokyo:“ú–{‘ª’nŒnCwgs84:¢ŠE‘ª’nŒnj
+ * ä½ç½®æƒ…å ±ã‚’ä¸–ç•Œæ¸¬åœ°ç³»ã«çµ±ä¸€ã™ã‚‹
+ * @param	array $items ä½ç½®æƒ…å ±
+ *					double 'latitude'  ç·¯åº¦ï¼ˆå°æ•°è¡¨è¨˜ï¼‰
+ *					double 'longitude' çµŒåº¦ï¼ˆå°æ•°è¡¨è¨˜ï¼‰
+ *					string 'geo'       æ¸¬åœ°ç³»ï¼ˆtokyo:æ—¥æœ¬æ¸¬åœ°ç³»ï¼Œwgs84:ä¸–ç•Œæ¸¬åœ°ç³»ï¼‰
 */
 function convertGeo(&$items) {
-	//ˆÜ“xEŒo“x‚ğ¬”•\‹L‚É•ÏŠ·‚·‚é
+	//ç·¯åº¦ãƒ»çµŒåº¦ã‚’å°æ•°è¡¨è¨˜ã«å¤‰æ›ã™ã‚‹
 	$latitude  = DoCoMo2Geo($items['latitude']);
 	$longitude = DoCoMo2Geo($items['longitude']);
 
@@ -104,52 +104,52 @@ function convertGeo(&$items) {
 	$items['geo']       = 'wgs84';
 }
 
-// ƒƒCƒ“ƒvƒƒOƒ‰ƒ€ =========================================================
+// ãƒ¡ã‚¤ãƒ³ãƒ—ãƒ­ã‚°ãƒ©ãƒ  =========================================================
 $items = array();
 
-//ƒf[ƒ^æ“¾
+//ãƒ‡ãƒ¼ã‚¿å–å¾—
 $items['latitude']  = isset($_GET['lat'])   ? $_GET['lat'] : '';
 $items['longitude'] = isset($_GET['lon'])   ? $_GET['lon'] : '';
 $items['geo']       = isset($_GET['geo'])   ? $_GET['geo'] : '';
 $items['x-acc']     = isset($_GET['x-acc']) ? $_GET['x-acc'] : '';
-$items['premiere']  = get_gmdate(time());		//Œ»İ‚Ì‚ğGMT•\‹L‚É•ÏŠ·‚·‚é
+$items['premiere']  = get_gmdate(time());		//ç¾åœ¨ã®æ™‚åˆ»ã‚’GMTè¡¨è¨˜ã«å¤‰æ›ã™ã‚‹
 
-//¢ŠE‘ª’nŒn‚É“ˆê‚·‚é
+//ä¸–ç•Œæ¸¬åœ°ç³»ã«çµ±ä¸€ã™ã‚‹
 if ($items['latitude'] != '')	convertGeo($items);
 
-// •\¦ˆ— =================================================================
+// è¡¨ç¤ºå‡¦ç† =================================================================
 echo <<< EOF
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
 <head>
-<title>ˆÊ’uî•ñQÆ</title>
+<title>ä½ç½®æƒ…å ±å‚ç…§</title>
 <meta name="ROBOTS" content="NOINDEX,FOLLOW" />
 </head>
 <body>
-<h1>¡ˆÊ’uî•ñQÆ</h1>
-<a href="{$myself}" lcs>&gt;&gt;ˆÊ’uî•ñQÆ&lt;&lt;</a>
+<h1>â– ä½ç½®æƒ…å ±å‚ç…§</h1>
+<a href="{$myself}" lcs>&gt;&gt;ä½ç½®æƒ…å ±å‚ç…§&lt;&lt;</a>
 <hr />
 
 EOF;
-//“o˜^’[––‚È‚çŒ‹‰Ê•\¦
+//ç™»éŒ²ç«¯æœ«ãªã‚‰çµæœè¡¨ç¤º
 if (isCellPhone($CellSerials) == TRUE) {
 	echo <<< EOF
 <table border="0">
-<tr><td>ó‹µ</td><td>{$msg}</td></tr>
-<tr><td></td><td>{$items['premiere']}</td></tr>
-<tr><td>ˆÜ“x</td><td>{$items['latitude']}</td></tr>
-<tr><td>Œo“x</td><td>{$items['longitude']}</td></tr>
-<tr><td>¸“x</td><td>{$items['x-acc']}</td></tr>
+<tr><td>çŠ¶æ³</td><td>{$msg}</td></tr>
+<tr><td>æ™‚åˆ»</td><td>{$items['premiere']}</td></tr>
+<tr><td>ç·¯åº¦</td><td>{$items['latitude']}</td></tr>
+<tr><td>çµŒåº¦</td><td>{$items['longitude']}</td></tr>
+<tr><td>ç²¾åº¦</td><td>{$items['x-acc']}</td></tr>
 </table>
 </body>
 </html>
 
 EOF;
-//“o˜^’[––ˆÈŠO‚Å‚ÍƒGƒ‰[•\¦
+//ç™»éŒ²ç«¯æœ«ä»¥å¤–ã§ã¯ã‚¨ãƒ©ãƒ¼è¡¨ç¤º
 	} else {
 	echo <<< EOF
-“o˜^’[––‚Å‚Í‚ ‚è‚Ü‚¹‚ñB
+ç™»éŒ²ç«¯æœ«ã§ã¯ã‚ã‚Šã¾ã›ã‚“ã€‚
 
 EOF;
 }
